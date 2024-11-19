@@ -13,18 +13,37 @@ infixl 7 :=>:
 infixl 8 :<=>:
 
 -------------------- EJERCICIO 1 --------------------
+conjunto :: Eq a => [a] -> [a]
+conjunto [] = []
+conjunto (x:xs) = x:conjunto[y | y <- xs, y /= x]
+
 variables :: Formula -> [Var]
-variables _ = undefined
+variables (Atom var) = [var]
+variables (Neg formula) = variables formula
+variables (f1 :&: f2) = conjunto (variables f1 ++ variables f2)
+variables (f1 :|: f2) = conjunto (variables f1 ++ variables f2)
+variables (f1 :=>: f2) = conjunto (variables f1 ++ variables f2)
+variables (f1 :<=>: f2) = conjunto (variables f1 ++ variables f2)
 -----------------------------------------------------
 
 -------------------- EJERCICIO 2 --------------------
 negacion :: Formula -> Formula
-negacion _ = undefined
+negacion (Atom var) = Neg var 
+negacion (Neg (Atom var)) = Atom var
+negacion (f1 :&: f2) = negacion f1 :|: negacion f2
+negacion (f1 :|: f2) = negacion f1 :&: negacion f2
+negacion (f1 :=>: f2) = f1 :&: negacion f2 
+negacion (f1 :<=>: f2) = negacion (f1 :=>: f2) :&: negacion (f2 :=>: f1) 
 -----------------------------------------------------
 
 -------------------- EJERCICIO 3 --------------------
 equivalencia :: Formula -> Formula
-equivalencia _ = undefined
+equivalencia (Atom var) = Atom var
+equivalencia (Neg f1) = negacion (equivalencia f1)
+equivalencia (f1 :&: f2) = equivalencia f1 :&: equivalencia f2
+equivalencia (f1 :|: f2) = equivalencia f1 :|: equivalencia f2
+equivalencia (f1 :=>: f2) = negacion (equivalencia f1) :|: (equivalencia f2) 
+equivalencia (f1 :<=>: f2) = equivalencia (f1 :=>: f2) :&: equivalencia (f2 :=>: f1)
 -----------------------------------------------------
 
 -------------------- EJERCICIO 4 --------------------
