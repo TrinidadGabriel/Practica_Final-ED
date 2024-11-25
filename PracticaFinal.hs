@@ -66,14 +66,18 @@ buscarValor v ((clave, valor):resto) =
 -------------------- EJERCICIO 5 --------------------
 combinaciones :: Formula -> [[(Var, Bool)]]
 combinaciones (Atom v) = [[(v, False)], [(v, True)]]
-combinaciones (f1 :&: f2) = 
-  [ (x ++ y) | x <- combinaciones f1, y <- combinaciones f2 ]
-combinaciones (f1 :|: f2) = 
-  [ (x ++ y) | x <- combinaciones f1, y <- combinaciones f2 ]
-combinaciones (f1 :=>: f2) = 
-  [ (x ++ y) | x <- combinaciones f1, y <- combinaciones f2 ]
-combinaciones (f1 :<=>: f2) = 
-  [ (x ++ y) | x <- combinaciones f1, y <- combinaciones f2 ]
+combinaciones (f1 :&: f2) = concatenar (combinaciones f1) (combinaciones f2)
+combinaciones (f1 :|: f2) = concatenar (combinaciones f1) (combinaciones f2)
+combinaciones (f1 :=>: f2) = concatenar (combinaciones f1) (combinaciones f2)
+combinaciones (f1 :<=>: f2) = concatenar (combinaciones f1) (combinaciones f2)
+
+concatenar :: [[(Var, Bool)]] -> [[(Var, Bool)]] -> [[(Var, Bool)]]
+concatenar [] _ = []
+concatenar (x:xs) ys = concatenarAux x ys ++ concatenar xs ys
+
+concatenarAux :: [(Var, Bool)] -> [[(Var, Bool)]] -> [[(Var, Bool)]]
+concatenarAux _ [] = []
+concatenarAux x (y:ys) = (x ++ y) : concatenarAux x ys 
 -----------------------------------------------------
 
 -------------------- EJERCICIO 6 --------------------
