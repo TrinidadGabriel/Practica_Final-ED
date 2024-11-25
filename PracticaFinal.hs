@@ -47,13 +47,33 @@ equivalencia (f1 :<=>: f2) = equivalencia (f1 :=>: f2) :&: equivalencia (f2 :=>:
 -----------------------------------------------------
 
 -------------------- EJERCICIO 4 --------------------
-interpretacion :: Formula -> [(Var,Bool)] -> Bool
-interpretacion _ = undefined
+interpretacion :: Formula -> [(Var, Bool)] -> Bool
+interpretacion (Atom v) estado = buscarValor v estado
+interpretacion (Neg f) estado = not (interpretacion f estado)
+interpretacion (f1 :&: f2) estado = interpretacion f1 estado && interpretacion f2 estado
+interpretacion (f1 :|: f2) estado = interpretacion f1 estado || interpretacion f2 estado
+interpretacion (f1 :=>: f2) estado = not (interpretacion f1 estado) || interpretacion f2 estado
+interpretacion (f1 :<=>: f2) estado = interpretacion f1 estado == interpretacion f2 estado
+
+buscarValor :: Var -> [(Var, Bool)] -> Bool
+buscarValor v [] = error "No todas las variables están definidas"
+buscarValor v ((clave, valor):resto) =
+  if v == clave
+    then valor
+    else buscarValor v resto
 -----------------------------------------------------
 
 -------------------- EJERCICIO 5 --------------------
-combinaciones :: Formula -> [[(Var,Bool)]]
-combinaciones _ = undefined
+combinaciones :: Formula -> [[(Var, Bool)]]
+combinaciones (Atom v) = [[(v, False)], [(v, True)]]
+combinaciones (f1 :&: f2) = 
+  [ (x ++ y) | x <- combinaciones f1, y <- combinaciones f2 ]
+combinaciones (f1 :|: f2) = 
+  [ (x ++ y) | x <- combinaciones f1, y <- combinaciones f2 ]
+combinaciones (f1 :=>: f2) = 
+  [ (x ++ y) | x <- combinaciones f1, y <- combinaciones f2 ]
+combinaciones (f1 :<=>: f2) = 
+  [ (x ++ y) | x <- combinaciones f1, y <- combinaciones f2 ]
 -----------------------------------------------------
 
 -------------------- EJERCICIO 6 --------------------
