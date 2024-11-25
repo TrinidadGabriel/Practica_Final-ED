@@ -58,8 +58,8 @@ combinaciones _ = undefined
 
 -------------------- EJERCICIO 6 --------------------
 
-tablaDeVerdad :: Formula -> [([(Var,Bool)],Bool)]
-tablaDeVerdad _ = undefined
+tablaDeVerdad :: Formula -> [([(Var, Bool)], Bool)]
+tablaDeVerdad f = [(comb, interpretacion f comb) | comb <- combinaciones f]
 -----------------------------------------------------
 
 
