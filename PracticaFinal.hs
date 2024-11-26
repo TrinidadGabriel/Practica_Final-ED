@@ -18,7 +18,7 @@ conjunto [] = []
 conjunto (x:xs) = x:conjunto[y | y <- xs, y /= x]
 
 variables :: Formula -> [Var]
-variables (Atom var) = [var]
+variables (Atom v) = [v]
 variables (Neg formula) = variables formula
 variables (f1 :&: f2) = conjunto (variables f1 ++ variables f2)
 variables (f1 :|: f2) = conjunto (variables f1 ++ variables f2)
@@ -28,8 +28,8 @@ variables (f1 :<=>: f2) = conjunto (variables f1 ++ variables f2)
 
 -------------------- EJERCICIO 2 --------------------
 negacion :: Formula -> Formula
-negacion (Atom var) = Neg var 
-negacion (Neg (Atom var)) = Atom var
+negacion (Atom v) = (Neg (Atom v)) 
+negacion (Neg (Atom v)) = Atom v
 negacion (f1 :&: f2) = negacion f1 :|: negacion f2
 negacion (f1 :|: f2) = negacion f1 :&: negacion f2
 negacion (f1 :=>: f2) = f1 :&: negacion f2 
@@ -38,7 +38,7 @@ negacion (f1 :<=>: f2) = negacion (f1 :=>: f2) :&: negacion (f2 :=>: f1)
 
 -------------------- EJERCICIO 3 --------------------
 equivalencia :: Formula -> Formula
-equivalencia (Atom var) = Atom var
+equivalencia (Atom v) = Atom v
 equivalencia (Neg f1) = negacion (equivalencia f1)
 equivalencia (f1 :&: f2) = equivalencia f1 :&: equivalencia f2
 equivalencia (f1 :|: f2) = equivalencia f1 :|: equivalencia f2
@@ -57,10 +57,9 @@ interpretacion (f1 :<=>: f2) estado = interpretacion f1 estado == interpretacion
 
 buscarValor :: Var -> [(Var, Bool)] -> Bool
 buscarValor v [] = error "No todas las variables están definidas"
-buscarValor v ((clave, valor):resto) =
-  if v == clave
-    then valor
-    else buscarValor v resto
+buscarValor v ((clave, valor):resto) = if v == clave
+                                       then valor
+                                       else buscarValor v resto
 -----------------------------------------------------
 
 -------------------- EJERCICIO 5 --------------------
@@ -88,5 +87,3 @@ construirAux :: Formula -> [[(Var, Bool)]] -> [([(Var, Bool)], Bool)]
 construirAux _ [] = []
 construirAux f (x:xs) = (x, interpretacion f x) : construirAux f xs
 -----------------------------------------------------
-
-
