@@ -81,9 +81,12 @@ concatenarAux x (y:ys) = (x ++ y) : concatenarAux x ys
 -----------------------------------------------------
 
 -------------------- EJERCICIO 6 --------------------
-
 tablaDeVerdad :: Formula -> [([(Var, Bool)], Bool)]
-tablaDeVerdad f = [(comb, interpretacion f comb) | comb <- combinaciones f]
+tablaDeVerdad f = construirAux f (combinaciones f)
+
+construirAux :: Formula -> [[(Var, Bool)]] -> [([(Var, Bool)], Bool)]
+construirAux _ [] = []
+construirAux f (x:xs) = (x, interpretacion f x) : construirAux f xs
 -----------------------------------------------------
 
 
